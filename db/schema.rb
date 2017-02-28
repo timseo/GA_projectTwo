@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170227215006) do
+ActiveRecord::Schema.define(version: 20170228001534) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,8 +18,10 @@ ActiveRecord::Schema.define(version: 20170227215006) do
   create_table "comments", force: :cascade do |t|
     t.integer  "user_id"
     t.text     "body"
+    t.integer  "post_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["post_id"], name: "index_comments_on_post_id", using: :btree
     t.index ["user_id"], name: "index_comments_on_user_id", using: :btree
   end
 
@@ -34,10 +36,9 @@ ActiveRecord::Schema.define(version: 20170227215006) do
   create_table "posts", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "drink_id"
-    t.integer  "comment_id"
+    t.integer  "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["comment_id"], name: "index_posts_on_comment_id", using: :btree
     t.index ["drink_id"], name: "index_posts_on_drink_id", using: :btree
     t.index ["user_id"], name: "index_posts_on_user_id", using: :btree
   end
@@ -64,8 +65,8 @@ ActiveRecord::Schema.define(version: 20170227215006) do
     t.index ["voter_id", "voter_type", "vote_scope"], name: "index_votes_on_voter_id_and_voter_type_and_vote_scope", using: :btree
   end
 
+  add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
-  add_foreign_key "posts", "comments"
   add_foreign_key "posts", "drinks"
   add_foreign_key "posts", "users"
 end
